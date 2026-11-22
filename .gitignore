@@ -1,0 +1,44 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.aab
+*.apk
+output-metadata.json
+
+# IntelliJ
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
+
+# 开发过程截图（仅本地调试用，不属于源码）
+shots/
+
+# Android Studio 导入时生成的报告
+import-summary.txt
+
+# Windows / macOS 系统文件
+Thumbs.db
+.DS_Store

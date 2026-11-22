@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    【扩展改造】原版这里只有一个 TextView（标题）。
+
+    改造后：一条笔记 = 左侧分类色条 + 标题 + 时间戳 + 内容摘要。
+    注意：颜色、背景都在代码里按主题动态设置，XML 中给的是“默认主题”下的兜底值，
+    这样一旦用户切换主题，Java 侧 setTextColor/setBackgroundColor 会覆盖这里。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="14dp"
+    android:paddingRight="14dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- 分类色条：宽 4dp 的竖条，颜色由 CategoryHelper 根据分类给出 -->
+    <View
+        android:id="@+id/category_bar"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="12dp"
+        android:background="#9E9E9E" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="true">
+
+            <!-- 标题：保留 @android:id/text1，SimpleCursorAdapter 靠这个 id 找目标控件，
+                 这样原有 adapter 构造代码完全不用改 -->
+            <TextView
+                android:id="@android:id/text1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="#1F2933" />
+
+            <!-- 【扩展】时间戳：新增控件，对应 cursors 里的 modified 列 -->
+            <TextView
+                android:id="@+id/note_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textSize="12sp"
+                android:singleLine="true"
+                android:textColor="#7B8794" />
+        </LinearLayout>
+
+        <!-- 内容摘要：让列表在不点开的情况下也能大致知道笔记写了什么 -->
+        <TextView
+            android:id="@+id/note_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textSize="13sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="#7B8794" />
+
+        <!-- 分类名标签，默认隐藏（分类为“默认”时不显示，减少视觉噪音） -->
+        <TextView
+            android:id="@+id/note_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="11sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

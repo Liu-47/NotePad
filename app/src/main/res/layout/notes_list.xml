@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    【扩展·新增布局】NotesList 的完整页面骨架。
+
+    原版 NotesList 直接用 ListActivity 的默认界面，没有自己的布局文件。
+    为了加入“搜索栏”“分类筛选栏”“底部统计”，这里需要一份自己的布局。
+
+    【关键约束】ListView 的 id 必须是 @android:id/list，
+    否则 ListActivity 会在 onContentChanged() 里直接抛异常
+    （"Your content must have a ListView whose id attribute is 'android.R.id.list'"）。
+
+    【关键约束 2】因为这里用 setContentView 接管了整个内容区，
+    ListActivity 原本根据 label 生成的标题栏就不再显示了，
+    所以顶部自带一个 toolbar_layout 充当标题栏，同时承载菜单按钮。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#F2F4F8"><!--
+        fitsSystemWindows="true" 是必须的：
+        Theme.Material.Light.NoActionBar + windowDrawsSystemBarBackgrounds=true 时，
+        内容区会延伸到状态栏下面（沉浸式），不加这个属性，
+        自绘标题栏会被状态栏的时间和信号图标压住。
+        加上之后系统会自动给内容区顶部补一个状态栏高度的 inset。
+    -->
+
+    <!-- ===== 自绘标题栏 ===== -->
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="4dp"
+        android:background="#1F2933">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/title_notes_list"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:singleLine="true" />
+
+        <!-- 新建笔记按钮：等价于原版工具栏里的 menu_add -->
+        <ImageButton
+            android:id="@+id/btn_add"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/menu_add"
+            android:padding="14dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_toolbar_add" />
+
+        <!-- 更多操作按钮：弹出排序 / 主题 / 粘贴 等菜单 -->
+        <ImageButton
+            android:id="@+id/btn_more"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="更多"
+            android:padding="14dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_toolbar_more" />
+    </LinearLayout>
+
+    <!-- ===== 搜索栏 ===== -->
+    <LinearLayout
+        android:id="@+id/search_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp">
+
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="搜索标题或内容"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/search_clear"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="4dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="清除搜索"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- ===== 分类筛选栏 ===== -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/category_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- ===== 列表 + 空提示 ===== -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- id 必须写成 @android:id/list，ListActivity 靠它认列表 -->
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="暂无笔记\n点击右上角按钮新建一条"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- ===== 底部统计条 ===== -->
+    <TextView
+        android:id="@+id/status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="7dp"
+        android:textSize="12sp" />
+</LinearLayout>

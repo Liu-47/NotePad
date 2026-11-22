@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    【扩展·新增】NotesList 使用的主题。
+
+    【踩坑记录 1】最早试过 parent="Theme.AppCompat.Light.DarkActionBar"——
+    NotesList 继承 ListActivity，而 AppCompat 主题要求 Activity 走
+    AppCompatActivity 的窗口装饰流程，两者混用会导致内容层里没有
+    ListActivity 依赖的布局，运行起来是一片白屏。
+
+    【踩坑记录 2】所以这里改成以原生 android:Theme 为根：
+
+      Theme.Material.Light.NoActionBar = 浅色内容 + 无系统标题栏
+
+    标题栏由 notes_list.xml 里的 toolbar_layout 自己画，
+    这样才能把"标题 + 新建按钮 + 更多按钮"和搜索栏、分类栏排成一体。
+
+    注意 windowBackground 不要设颜色：NoActionBar 主题下它会以 inset 形式
+    在内容区四周留出阴影边距，导致整个页面看起来像被"框住"。
+-->
+<resources>
+
+    <style name="NotesListTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <!-- 顶栏底色：深灰，与状态栏连成一片 -->
+        <item name="android:colorPrimary">#1F2933</item>
+        <item name="android:colorPrimaryDark">#1F2933</item>
+        <!-- 强调色：输入光标、勾选项 -->
+        <item name="android:colorAccent">#2F6FED</item>
+        <!-- 状态栏颜色由代码设置（getWindow().setStatusBarColor），这里不写死 -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+</resources>

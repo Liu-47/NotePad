@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2010 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<!--
+    【扩展改造】原版编辑器只有一个铺满全屏的 LinedEditText。
+
+    这里在外面包一层竖向 LinearLayout，顶部插一行“时间信息 + 分类按钮”：
+      - 时间信息：显示“创建于 / 修改于”，是时间戳功能的延伸；
+      - 分类按钮：点击弹出分类选择，是分类功能的第二个入口。
+
+    注意 LinedEditText 必须用 <view class="..."> 完整类名引用，
+    因为它是一个内部类（NoteEditor$LinedEditText）。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editor_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <!-- 顶部信息条 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp">
+
+        <TextView
+            android:id="@+id/note_time_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="11sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="#7B8794" />
+
+        <TextView
+            android:id="@+id/note_category_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textSize="12sp"
+            android:text="分类：默认"
+            android:textColor="#9E9E9E" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#1F000000" />
+
+    <!-- 正文编辑区：保留原版的 LinedEditText（每行画横线） -->
+    <view
+        class="com.example.android.notepad.NoteEditor$LinedEditText"
+        android:id="@+id/note"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:padding="5dp"
+        android:scrollbars="vertical"
+        android:fadingEdge="vertical"
+        android:gravity="top"
+        android:textSize="22sp"
+        android:capitalize="sentences"
+    />
+</LinearLayout>
