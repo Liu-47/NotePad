@@ -26,9 +26,6 @@ public final class ThemeHelper {
     /** 主题键 */
     public static final String KEY_THEME = "pref_theme";
 
-    /** 搜索时是否同时匹配正文 */
-    public static final String KEY_SEARCH_CONTENT = "pref_search_content";
-
     /** 主题：浅色·蓝（默认） */
     public static final int THEME_LIGHT_BLUE = 0;
     /** 主题：浅色·纸黄 */
@@ -71,16 +68,6 @@ public final class ThemeHelper {
     /** 当前是否深色基底 */
     public static boolean isDarkTheme(Context context) {
         return getTheme(context) == THEME_DARK;
-    }
-
-    /** 读取“搜索时是否匹配正文”，默认 true */
-    public static boolean isSearchContentEnabled(Context context) {
-        return prefs(context).getBoolean(KEY_SEARCH_CONTENT, true);
-    }
-
-    /** 保存“搜索时是否匹配正文” */
-    public static void setSearchContentEnabled(Context context, boolean enabled) {
-        prefs(context).edit().putBoolean(KEY_SEARCH_CONTENT, enabled).apply();
     }
 
     /** 取得当前主题的配色方案 */

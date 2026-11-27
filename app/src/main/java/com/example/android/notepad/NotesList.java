@@ -100,6 +100,14 @@ public class NotesList extends ListActivity {
     private static final int COLUMN_INDEX_NOTE = 3;
     private static final int COLUMN_INDEX_CATEGORY = 4;
 
+    /**
+     * 原版写进 title 列的占位符。
+     *
+     * <p>NoteEditor 新建笔记时会往 title 写 "<Untitled>"，如果用户一直没编辑过标题，
+     * 这个值就会留在库里。列表展示时要把它识别成“没有标题”而不是当成正常标题。
+     */
+    private static final String UNTITLED_PLACEHOLDER = "<Untitled>";
+
     /* ---------------- 【扩展】搜索与排序、筛选的界面状态 ---------------- */
 
     /** 当前搜索关键字，空串表示不搜索 */
@@ -336,7 +344,24 @@ public class NotesList extends ListActivity {
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 switch (columnIndex) {
                     case COLUMN_INDEX_TITLE:
-                        ((TextView) view).setText(cursor.getString(columnIndex));
+                        /*
+                         * 【修复】标题兜底。
+                         *
+                         * 原版在新建笔记时会往 title 列写入 "<Untitled>" 作为占位符，
+                         * 空笔记如果没再编辑过，库里就一直是这个值，直接 setText 会让
+                         * 中文界面上冒出 "<Untitled>" 这种英文占位符。
+                         *
+                         * 这里判断两种情况：空 / 纯空白 / 原版占位符，统一显示“无标题笔记”。
+                         * 注意要把 <Untitled> 一起判掉——它不是空串，单判 isEmpty 拦不住。
+                         */
+                        String rawTitle = cursor.getString(columnIndex);
+                        if (TextUtils.isEmpty(rawTitle)
+                                || rawTitle.trim().length() == 0
+                                || UNTITLED_PLACEHOLDER.equals(rawTitle.trim())) {
+                            ((TextView) view).setText(R.string.hint_no_title);
+                        } else {
+                            ((TextView) view).setText(rawTitle);
+                        }
                         // 标题颜色跟随主题（深色主题下必须是浅色字，否则看不见）
                         ((TextView) view).setTextColor(mPalette.textPrimary);
                         return true;
@@ -697,21 +722,23 @@ public class NotesList extends ListActivity {
             args.add(String.valueOf(mCategoryFilter));
         }
 
-        // 条件二：关键字（标题 OR 正文，可选是否搜正文）
+        // 条件二：关键字（标题 OR 正文，两者都匹配）
         if (!TextUtils.isEmpty(mQuery)) {
             if (selection.length() > 0) {
                 selection.append(" AND ");
             }
             String like = "%" + mQuery + "%";
-            boolean searchContent = ThemeHelper.isSearchContentEnabled(this);
+            /*
+             * 标题和正文都要匹配，整体用括号包起来，避免和前面的分类条件
+             * 混在一起变成 "category=? AND title LIKE ? OR note LIKE ?" ——
+             * 那样 OR 的优先级会让分类筛选失效。
+             */
             selection.append("(")
                     .append(NotePad.Notes.COLUMN_NAME_TITLE).append(" LIKE ?");
             args.add(like);
-            if (searchContent) {
-                selection.append(" OR ")
-                        .append(NotePad.Notes.COLUMN_NAME_NOTE).append(" LIKE ?");
-                args.add(like);
-            }
+            selection.append(" OR ")
+                    .append(NotePad.Notes.COLUMN_NAME_NOTE).append(" LIKE ?");
+            args.add(like);
             selection.append(")");
         }
 

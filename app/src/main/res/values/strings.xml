@@ -51,4 +51,6 @@
     <!-- 【扩展】编辑器页新增文案 -->
     <string name="hint_category">分类</string>
     <string name="hint_title">标题（可留空，自动取正文前几个字）</string>
+    <!-- 空笔记在列表里的标题兜底，替代原版的 "<Untitled>" 占位符 -->
+    <string name="hint_no_title">无标题笔记</string>
 </resources>
